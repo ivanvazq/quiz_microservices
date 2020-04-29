@@ -1,0 +1,34 @@
+<h1>
+    Questions:
+</h1>
+
+<table>
+    <% for (var i in out.quizzes) { %>
+    <% var quiz = out.quizzes[i]; %>
+    <% if (favoritos[out.quizzes[i].id-1]) { %>
+    <tr>
+        <td>
+            <a href="/quizzes/<%= quiz.id %>/play"><%= quiz.question %></a>
+        </td>
+        <td>
+            <a href="/quizzes/<%= quiz.id %>" class="button">show</a>
+        </td>
+        <td>
+            <a href="/quizzes/<%= quiz.id %>/edit" class="button">edit</a>
+        </td>
+        <td>
+            <a href="/quizzes/<%= quiz.id %>?_method=DELETE"
+               onClick="return confirm('Delete: <%= quiz.question %>');"
+               class="button">
+                delete
+            </a>
+        </td>
+        <td>
+            <% include ../fav %>
+        </td>
+    </tr>
+    <% } %>
+    <% } %>
+</table>
+
+<a href="/quizzes/new" class="button">Create New Question></a>

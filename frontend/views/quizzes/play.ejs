@@ -1,0 +1,47 @@
+
+<h1>
+    Play:
+</h1>
+
+<form method="get" action="/quizzes/<%= out.quiz.id %>/check">
+    <p>
+        Question: <b><%= out.quiz.question %></b>
+    </p>
+
+
+    <div class="wideRow">
+        <input type="text" class="itemWide" name="answer" value="<%= out.answer %>" placeholder="Answer" autocomplete="off"/>
+        <input type="submit" class="itemNarrow" value="Check">
+    </div>
+</form>
+
+<h1>
+    Tips:
+</h1>
+
+<table>
+    <% for (var i in tips) { %>
+    <% var tip = tips[i]; %>
+    <tr>
+        <td>
+            <b><%= tip %></b>
+        </td>
+        <% if (!tip || tip === "No hay pistas") { %>
+        <% } else { %>
+        <td>
+            <a href="/tips/<%= out.quiz.id %>/<%= [i] %>?_method=DELETE"
+               onClick="return confirm('Delete: <%= tip %>');"
+               class="button">
+                delete
+            </a>
+        </td>
+        <% } %>        
+    </tr>
+    <% } %>
+</table>
+
+<% if (locals.user) { %>
+        <% include ../tips/new %>
+<% } %>
+
+<a href="/quizzes" class="button">Go back</a>

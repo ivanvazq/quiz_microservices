@@ -1,0 +1,9 @@
+<form method="POST" action="/quizzes/<%= quiz.id %>/fav/">
+    
+    <% if (favoritos[out.quizzes[i].id-1]) { %>
+        <input type="image" style="outline:0px" img src="/images/star_yellow.png" width="30px" height="30px"></input>
+    <% } else { %>
+        <input type="image" style="outline:0px" img src="/images/star_grey.png" width="30px" height="30px"></input>
+    <% } %>
+
+</form>
