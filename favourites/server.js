@@ -6,7 +6,8 @@ var fs = require('fs');
 var location = require('location')
 const fetch = require('node-fetch');
 
-
+// var sessionService = "localhost:3003";
+var sessionService = "session:3003";
 
 router.get('/api/fav', (req, res, next) => {
     fs.readFile('./fav.json', 'utf8', function readFileCallback(err, data){
@@ -21,7 +22,7 @@ router.get('/api/fav', (req, res, next) => {
 
 router.get('/api/fav/:id(\\d+)', (req, res, next) => {
 
-    fetch("http://localhost:3003/api/login")
+    fetch("http://" + sessionService +"/api/login")
     .then(res => res.json())
     .then(userLog => {
         userLog = userLog[1];
@@ -49,7 +50,7 @@ router.post('/api/fav/:id(\\d+)', (req, res, next) => {
         const fav = out.fav;
         // var state = db.favs[req.params.id].fav;
 
-        fetch("http://localhost:3003/api/login")
+        fetch("http://" + sessionService +"/api/login")
         .then(res => res.json())
         .then(userLog => {
             userLog = userLog[1];

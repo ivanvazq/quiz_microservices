@@ -12,6 +12,9 @@ const sequelize = new Sequelize("sqlite:user.sqlite", options);
 
 var userLog = [];
 
+// var favService = "localhost:3005";
+var favService = "fav:3005";
+
 app.use(bodyParser.json());
 
 // Base de datos Users
@@ -178,7 +181,7 @@ router.post('/api/users', (req, res, next) => {
         .then(user => {
 //        req.flash('success', 'Quiz created successfully.');
             let xhr = new XMLHttpRequest();
-            let url = 'http://localhost:3005/api/fav/new';
+            let url = 'http://' + favService + '/api/fav/new';
             xhr.open("POST", url, true);
             var data = JSON.stringify(newUser.username);
             console.log(data)

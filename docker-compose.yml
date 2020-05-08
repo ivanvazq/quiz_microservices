@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  frontend:
+    container_name: frontend
+    build: './frontend'
+    ports:
+      - "3000:3000"
+    networks:
+      - mynet
+    
+
+  quiz:
+    container_name: quiz
+    build: './quiz'
+    ports:
+      - "3001:3001"
+    networks:
+      - mynet
+
+  session:
+    container_name: session
+    build: './session'
+    ports:
+      - "3003:3003"
+    networks:
+      - mynet
+
+  tips:
+    container_name: tips
+    build: './tips'
+    ports:
+      - "3004:3004"
+    networks:
+      - mynet
+
+  fav:
+    container_name: fav
+    build: './favourites'
+    ports:
+      - "3005:3005"
+    networks:
+      - mynet
+
+networks:
+  mynet:
+    driver: bridge
+    ipam:
+      driver: default

@@ -16,8 +16,18 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 // const quizController = require('./quizController');
 
-const quizzes = "http://localhost:3001/api/quizzes";
-const users = "http://localhost:3003/api/users"
+// const quizzes = "http://localhost:3001/api/quizzes";
+// const users = "http://localhost:3003/api/users"
+
+var quizService = "quiz:3001";  //localhost:3001
+var sessionService = "session:3003" //localhost:3003
+var tipsService = "tips:3004"   //localhost:3004
+var favService = "fav:3005" //localhost:3005
+
+// var quizService = "localhost:3001";
+// var sessionService = "localhost:3003";
+// var tipsService = "localhost:3004";
+// var favService = "localhost:3005";
 
 
 // // Autoload for routes using :quizId
@@ -30,7 +40,7 @@ const authenticateJWT = express.Router();
 
 authenticateJWT.use((req, res, next) => {
 
-    fetch("http://localhost:3003/api/login")
+    fetch("http://" + sessionService + "/api/login")
     .then(res => res.json())
     .then(token => {
         console.log(token);
@@ -58,7 +68,7 @@ authenticateJWT.use((req, res, next) => {
 
 router.get('/', authenticateJWT, (req, res, next) => {
     
-    fetch("http://localhost:3003/api/login")
+    fetch("http://" + sessionService + "/api/login")
     .then(res => res.json())
     .then(token => {
         console.log(token);
@@ -74,10 +84,10 @@ router.get('/', authenticateJWT, (req, res, next) => {
 //GET all quizzes
 router.get('/quizzes', authenticateJWT, (req, res, next) => {
 
-    fetch(quizzes)
+    fetch("http://" + quizService + "/api/quizzes")
         .then(res => res.json())
         .then((out) => {
-            fetch('http://localhost:3005/api/fav/')
+            fetch('http://' + favService + '/api/fav/')
                 .then(res => res.json())
                 .then((fav) => {
                     for(var i in fav.favs){
@@ -99,7 +109,7 @@ router.get('/quizzes', authenticateJWT, (req, res, next) => {
 //Show Quiz
 router.get('/quizzes/:id(\\d+)', authenticateJWT, (req, res, next) => {
 
-    fetch('http://localhost:3001/api/quizzes/'+req.params.id)
+    fetch('http://' + quizService + '/api/quizzes/'+req.params.id)
         .then(res => res.json())
         .then((out) => {
             res.render('quizzes/show', out);
@@ -112,7 +122,7 @@ router.get('/quizzes/:id(\\d+)', authenticateJWT, (req, res, next) => {
 
 router.get('/quizzes/new', authenticateJWT, (req, res, next) => {
 
-    fetch('http://localhost:3001/api/quizzes/new')
+    fetch('http://' + quizService + '/api/quizzes/new')
         .then(res => res.json())
         .then((out) => {
             res.render('quizzes/new', out);
@@ -126,7 +136,7 @@ router.post('/quizzes', authenticateJWT, (req, res, next) => {
     const author = res.locals.user;
 
     let xhr = new XMLHttpRequest();
-    let url = 'http://localhost:3001/api/quizzes';
+    let url = 'http://' + quizService + '/api/quizzes';
     xhr.open("POST", url, true);
     // console.log(question)
     var data = JSON.stringify({question, answer, author});
@@ -141,7 +151,7 @@ router.post('/quizzes', authenticateJWT, (req, res, next) => {
 
 router.get('/quizzes/:id(\\d+)/edit', authenticateJWT, (req, res, next) => {
 
-    fetch('http://localhost:3001/api/quizzes/' + req.params.id)
+    fetch('http://' + quizService + '/api/quizzes/' + req.params.id)
         .then(res => res.json())
         .then((out) => {
             res.render('quizzes/edit', out);
@@ -156,7 +166,7 @@ router.put('/quizzes/:id(\\d)', authenticateJWT, (req, res, next) => {
     console.log(question)
 
     let xhr = new XMLHttpRequest();
-    let url = 'http://localhost:3001/api/quizzes/' + req.params.id;
+    let url = 'http://' + quizService + '/api/quizzes/' + req.params.id;
     xhr.open("PUT", url, true);
     var data = JSON.stringify({ question, answer});
     console.log(data)
@@ -171,11 +181,11 @@ router.put('/quizzes/:id(\\d)', authenticateJWT, (req, res, next) => {
 router.delete('/quizzes/:id(\\d+)', authenticateJWT, (req, res, next) => {
 
 
-    fetch('http://localhost:3001/api/quizzes/'+req.params.id)
+    fetch('http://' + quizService + '/api/quizzes/'+req.params.id)
         .then(res => res.json())
         .then((out) => {
             let xhr = new XMLHttpRequest();
-            let url = 'http://localhost:3001/api/quizzes/' + req.params.id;
+            let url = 'http://' + quizService + '/api/quizzes/' + req.params.id;
             xhr.open("DELETE", url, true);
             var data = JSON.stringify(out);
             xhr.send(data);
@@ -187,17 +197,16 @@ router.delete('/quizzes/:id(\\d+)', authenticateJWT, (req, res, next) => {
 });
 
 router.get('/quizzes/:id(\\d+)/play', (req, res, next) => {
-    fetch('http://localhost:3001/api/quizzes/'+req.params.id+'/play')
+    fetch('http://' + quizService + '/api/quizzes/'+req.params.id+'/play')
         .then(res => res.json())
         .then((out) => {
-            fetch('http://localhost:3004/api/tips/' + req.params.id)
+            fetch('http://' + tipsService + '/api/tips/' + req.params.id)
             .then(res => res.json())
             .then(tips => {
                 console.log(tips)
                 res.render('quizzes/play', {out, tips})
             })
         }).catch(err => { throw err });
-    
 });
 
 
@@ -205,7 +214,7 @@ router.get('/quizzes/:id(\\d+)/check', (req, res, next) => {
     
     const {query} = req;
 
-    fetch('http://localhost:3001/api/quizzes/'+req.params.id)
+    fetch('http://' + quizService + '/api/quizzes/'+req.params.id)
         .then(res => res.json())
         .then((out) => {
             const answer = query.answer || "";
@@ -231,7 +240,7 @@ router.post('/login', (req, res, next) => {
     const {username, password} = req.body;
 
     let xhr = new XMLHttpRequest();
-    let url = 'http://localhost:3003/api/login';
+    let url = 'http://' + sessionService + '/api/login';
     xhr.open("POST", url, true);
     var data = JSON.stringify({ username, password });
     //console.log(data)
@@ -252,7 +261,7 @@ router.get('/logout', (req, res, next) => {
     const a = 1;
 
     let xhr = new XMLHttpRequest();
-    let url = 'http://localhost:3003/api/logout';
+    let url = 'http://' + sessionService + '/api/logout';
     xhr.open("POST", url, true);
     var data = JSON.stringify(a);
     //console.log(data)
@@ -268,7 +277,7 @@ router.get('/logout', (req, res, next) => {
 //GET all users
 router.get('/users', (req, res, next) => {
 
-    fetch('http://localhost:3003/api/users/')
+    fetch('http://' + sessionService + '/api/users/')
         .then(res => res.json())
         .then((out) => {
             res.render('users/index', out);
@@ -279,7 +288,7 @@ router.get('/users', (req, res, next) => {
 //Show User
 router.get('/users/:id(\\d+)', (req, res, next) => {
 
-    fetch('http://localhost:3003/api/users/'+req.params.id)
+    fetch('http://' + sessionService + '/api/users/'+req.params.id)
         .then(res => res.json())
         .then((out) => {
             res.render('users/show', out);
@@ -290,10 +299,10 @@ router.get('/users/:id(\\d+)', (req, res, next) => {
 //GET USER quizzes
 router.get('/users/:id(\\d+)/quizzes', authenticateJWT, (req, res, next) => {
 
-    fetch(quizzes)
+    fetch('http://' + quizService + '/api/quizzes/')
         .then(res => res.json())
         .then((out) => {
-            fetch('http://localhost:3005/api/fav/')
+            fetch('http://' + favService + '/api/fav/')
                 .then(res => res.json())
                 .then((fav) => {
                     for(var i in fav.favs){
@@ -312,7 +321,7 @@ router.get('/users/:id(\\d+)/quizzes', authenticateJWT, (req, res, next) => {
 //EDIT user
 router.get('/users/:id(\\d+)/edit', (req, res, next) => {
 
-    fetch('http://localhost:3003/api/users/' + req.params.id)
+    fetch('http://' + sessionService + '/api/users/' + req.params.id)
         .then(res => res.json())
         .then((out) => {
             res.render('users/edit', out);
@@ -325,7 +334,7 @@ router.put('/users/:id(\\d+)', (req, res, next) => {
     const body = req.body;
 
     let xhr = new XMLHttpRequest();
-    let url = 'http://localhost:3003/api/users/' + req.params.id;
+    let url = 'http://' + sessionService + '/api/users/' + req.params.id;
     xhr.open("PUT", url, true);
     var data = JSON.stringify(body);
     console.log(data)
@@ -338,7 +347,7 @@ router.put('/users/:id(\\d+)', (req, res, next) => {
 
 //Create new user
 router.get('/users/new', (req, res, next) => {
-    fetch('http://localhost:3003/api/users/new')
+    fetch('http://' + sessionService + '/api/users/new')
         .then(res => res.json())
         .then((out) => {
             res.render('users/new', out);
@@ -352,7 +361,7 @@ router.post('/users', (req, res, next) => {
     const {username, password} = req.body;
 
     let xhr = new XMLHttpRequest();
-    let url = 'http://localhost:3003/api/users';
+    let url = 'http://' + sessionService + '/api/users';
     xhr.open("POST", url, true);
     var data = JSON.stringify({ username, password });
     console.log(data)
@@ -372,7 +381,7 @@ router.post('/quizzes/:id(\\d+)/tips', (req, res, next) => {
     const tip = req.body.text;
 
     let xhr = new XMLHttpRequest();
-    let url = 'http://localhost:3004/api/tips/' + req.params.id;
+    let url = 'http://' + tipsService + '/api/tips/' + req.params.id;
     xhr.open("POST", url, true);
     var data = JSON.stringify({tip});
     console.log(data)
@@ -383,11 +392,11 @@ router.post('/quizzes/:id(\\d+)/tips', (req, res, next) => {
 
 router.delete('/tips/:quizId(\\d+)/:id', authenticateJWT, (req, res, next) => {
 
-    fetch('http://localhost:3004/api/tips/'+req.params.quizId)
+    fetch('http://' + tipsService + '/api/tips/'+req.params.quizId)
         .then(res => res.json())
         .then((out) => {
             let xhr = new XMLHttpRequest();
-            let url = 'http://localhost:3004/api/tips/' + req.params.quizId;
+            let url = 'http://' + tipsService + '/api/tips/' + req.params.quizId;
             xhr.open("DELETE", url, true);
             out[req.params.id] = "";
             var data = JSON.stringify(out);
@@ -407,7 +416,7 @@ router.post('/quizzes/:id(\\d+)/fav', (req, res, next) => {
     const fav = 1;
 
     let xhr = new XMLHttpRequest();
-    let url = 'http://localhost:3005/api/fav/' + req.params.id;
+    let url = 'http://' + favService + '/api/fav/' + req.params.id;
     xhr.open("POST", url, true);
     var data = JSON.stringify({fav});
     console.log(data)
@@ -437,14 +446,16 @@ app.use(function(req, res, next) {
     // console.log(user)
     // To use user in the views
     
-    fetch('http://localhost:3003/api/login/')
+    fetch('http://' + sessionService + '/api/login/')
         .then(res => res.json())
         .then((out) => {
             res.locals.user = out[1];
             res.locals.auth = out[0];
             res.locals.id = out[2];
             res.locals.isAdmin = out[3]
-    }).catch(err => {throw err});
+    }).catch(err => {
+        assert.isNotOk(err, 'Promise error')
+    });
     
 
     next();
