@@ -8,7 +8,7 @@ RUN curl -sl https://deb.nodesource.com/setup_10.x | bash - && \
 
 RUN git clone https://github.com/ivanvazq/quiz_microservices
 
-WORKDIR /favourites
+WORKDIR ./quiz_microservices/favourites
 
 RUN npm install
 
