@@ -1,0 +1,194 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quiz
+spec:
+  selector:
+    matchLabels:
+      app: quiz
+  template:
+    metadata:
+      labels:
+        app: quiz
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: gcr.io/${PROJECT_ID}/quiz
+        ports:
+        - containerPort: 3001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quiz
+spec:
+  type: ClusterIP
+  selector:
+    app: quiz
+  ports:
+  - name: grpc
+    port: 3001
+    targetPort: 3001
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+      annotations:
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+    spec:
+      containers:
+        - name: server
+          image: gcr.io/${PROJECT_ID}/frontend
+          ports:
+          - containerPort: 3000
+          readinessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/"
+              port: 3000
+
+          livenessProbe:
+            initialDelaySeconds: 10
+            httpGet:
+              path: "/"
+              port: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: frontend
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-external
+spec:
+  type: LoadBalancer
+  selector:
+    app: frontend
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3000
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fav
+spec:
+  selector:
+    matchLabels:
+      app: fav
+  template:
+    metadata:
+      labels:
+        app: fav
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: gcr.io/${PROJECT_ID}/fav
+        ports:
+        - containerPort: 3005
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fav
+spec:
+  type: ClusterIP
+  selector:
+    app: fav
+  ports:
+  - name: grpc
+    port: 3005
+    targetPort: 3005
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session
+spec:
+  selector:
+    matchLabels:
+      app: session
+  template:
+    metadata:
+      labels:
+        app: session
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: gcr.io/${PROJECT_ID}/session
+        ports:
+        - containerPort: 3005
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: session
+spec:
+  type: ClusterIP
+  selector:
+    app: session
+  ports:
+  - name: grpc
+    port: 3003
+    targetPort: 3003
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tips
+spec:
+  selector:
+    matchLabels:
+      app: tips
+  template:
+    metadata:
+      labels:
+        app: tips
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: gcr.io/${PROJECT_ID}/tips
+        ports:
+        - containerPort: 3004
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tips
+spec:
+  type: ClusterIP
+  selector:
+    app: tips
+  ports:
+  - name: grpc
+    port: 3004
+    targetPort: 3004
+---
