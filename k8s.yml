@@ -14,7 +14,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: gcr.io/${PROJECT_ID}/quiz
+        image: gcr.io/quizk8s/quiz
         ports:
         - containerPort: 3001
 ---
@@ -49,7 +49,7 @@ spec:
     spec:
       containers:
         - name: server
-          image: gcr.io/${PROJECT_ID}/frontend
+          image: gcr.io/quizk8s/frontend
           ports:
           - containerPort: 3000
           readinessProbe:
@@ -107,7 +107,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: gcr.io/${PROJECT_ID}/fav
+        image: gcr.io/quizk8s/fav
         ports:
         - containerPort: 3005
 ---
@@ -141,7 +141,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: gcr.io/${PROJECT_ID}/session
+        image: gcr.io/quizk8s/session
         ports:
         - containerPort: 3005
 ---
@@ -175,7 +175,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: gcr.io/${PROJECT_ID}/tips
+        image: gcr.io/quizk8s/tips
         ports:
         - containerPort: 3004
 ---
